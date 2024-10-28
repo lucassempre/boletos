@@ -1,0 +1,337 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "API de Gerenciamento Boletos",
+        "version": "1.0.0",
+        "description": "API para gerenciamento de upload de arquivos, consulta e processamento de boletos e operações."
+    },
+    "paths": {
+        "/api/files/upload": {
+            "post": {
+                "summary": "Upload de arquivos",
+                "description": "Realiza o upload de um arquivo para o sistema.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Arquivo a ser carregado."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Upload realizado com sucesso.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/files/{uuid}/download": {
+            "get": {
+                "summary": "Download de arquivos",
+                "description": "Gera link para download de arquivo especificado por UUID.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "UUID do arquivo para download."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Link de download gerado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Arquivo não encontrado."
+                    }
+                }
+            }
+        },
+        "/api/files/{uuid}": {
+            "delete": {
+                "summary": "Deleta um arquivo",
+                "description": "Remove o arquivo do sistema pelo UUID.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "UUID do arquivo a ser deletado."
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Arquivo deletado com sucesso."
+                    },
+                    "404": {
+                        "description": "Falha ao deletar o arquivo."
+                    }
+                }
+            }
+        },
+        "/api/files": {
+            "get": {
+                "summary": "Lista de arquivos",
+                "description": "Lista todos os arquivos disponíveis.",
+                "responses": {
+                    "200": {
+                        "description": "Lista de arquivos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/boletos": {
+            "get": {
+                "summary": "Lista boletos",
+                "description": "Retorna a lista de boletos com paginação.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Número da página."
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Número de boletos por página."
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Lista de boletos retornada."
+                    },
+                    "404": {
+                        "description": "Erro ao exibir boletos."
+                    }
+                }
+            }
+        },
+        "/api/boletos/{uuid}": {
+            "get": {
+                "summary": "Exibe boleto específico",
+                "description": "Retorna informações de um boleto com base no UUID.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "UUID do boleto."
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Informações do boleto."
+                    },
+                    "404": {
+                        "description": "Erro ao exibir o boleto."
+                    }
+                }
+            }
+        },
+        "/api/boletos/status/{status}": {
+            "get": {
+                "summary": "Filtra boletos por status",
+                "description": "Retorna boletos com o status especificado.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "status",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Status do boleto."
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Boletos com o status especificado."
+                    },
+                    "404": {
+                        "description": "Erro ao exibir boletos."
+                    }
+                }
+            }
+        },
+        "/api/processar/{arquivo_uuid}": {
+            "post": {
+                "summary": "Processa um arquivo",
+                "description": "Envia um arquivo para a fila de processamento com base no UUID.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "arquivo_uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "UUID do arquivo para processamento."
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Arquivo enfileirado para processamento."
+                    },
+                    "404": {
+                        "description": "Falha ao processar o arquivo."
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Boleto": {
+                "type": "object",
+                "properties": {
+                    "uuid": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "governmentId": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "debtAmount": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "debtDueDate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "debtId": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    }
+                }
+            },
+            "File": {
+                "type": "object",
+                "properties": {
+                    "uuid": {
+                        "type": "string"
+                    },
+                    "fileName": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "Operacao": {
+                "type": "object",
+                "properties": {
+                    "uuid": {
+                        "type": "string"
+                    },
+                    "file": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Processamento": {
+                "type": "object",
+                "properties": {
+                    "uuid": {
+                        "type": "string"
+                    },
+                    "operacao_uuid": {
+                        "type": "string"
+                    },
+                    "hash_file": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Status": {
+                "type": "object",
+                "properties": {
+                    "uuid": {
+                        "type": "string"
+                    },
+                    "processamento_uuid": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "status_descricao": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
