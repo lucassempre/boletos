@@ -29,8 +29,9 @@ RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
 COPY --chown=1000:1000 ./src /var/www
 COPY --chown=1000:1000 ./docker/custom.ini /usr/local/etc/php/conf.d/custom.ini
 
-#RUN composer install
+RUN composer install
 
 
-#RUN chmod -R 755 storage/
-#RUN chown 1000:1000 -R /var/www/storage
+RUN chmod -R 755 storage/
+RUN chown 1000:1000 -R /var/www/storage
+
