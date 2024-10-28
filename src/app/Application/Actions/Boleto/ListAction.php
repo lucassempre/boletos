@@ -10,12 +10,12 @@ class ListAction
 
     public function __construct(BoletoRepositoryInterface $boletoRepository)
     {
-        $this->$boletoRepository = $boletoRepository;
+        $this->boletoRepository = $boletoRepository;
     }
 
-    public function execute(): ?string
+    public function execute(int $page, int $limit): array
     {
-        return $this->boletoRepository->all();
+        return $this->boletoRepository->page($page, $limit);
     }
 
 }

@@ -32,4 +32,10 @@ class BoletoRepository extends BaseRepository implements BoletoRepositoryInterfa
     {
         return $this->model->where(['status', $status]);
     }
+
+    public function page(int $page, int $limit): array
+    {
+        $skip = ($page - 1) * $limit;
+        return $this->model->skip($skip)->take($limit)->get()->toArray();
+    }
 }
