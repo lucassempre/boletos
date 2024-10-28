@@ -12,8 +12,6 @@ services:
       dockerfile: ./docker/app.dockerfile
     env_file:
       ./src/.env
-    volumes:
-      - ./src/:/var/www/
     restart: unless-stopped
     depends_on:
       - db
@@ -39,8 +37,6 @@ services:
       dockerfile: ./docker/app.dockerfile
     env_file:
       ./src/.env
-    volumes:
-      - ./src/:/var/www/
     command: php artisan queue:work redis --queue=app_01_alta --memory=1024 --max-jobs=1000
     restart: unless-stopped
     depends_on:
@@ -49,8 +45,6 @@ services:
   localstack:
     container_name: aws
     image: localstack/localstack
-#    ports:
-#      - '4566-4597:4566-4597'
     environment:
       - SERVICES=s3
       - AWS_ACCESS_KEY_ID=access_key
@@ -61,11 +55,10 @@ services:
   redis:
     image: redis:latest
     container_name: redis
-#    ports:
-#      - "6379:6379"
     volumes:
       - redis_data:/data
   db:
+    container_name: db
     image: mysql:5.7
     restart: always
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci --bind-address=0.0.0.0
@@ -75,7 +68,5 @@ services:
       - MYSQL_ROOT_PASSWORD=808S280777D21SDR1567BA
       - MYSQL_DATABASE=app
       - MYSQL_ROOT_HOST=%
-#    ports:
-#      - '3307:3306'
     volumes:
       - db-data:/var/lib/mysql
